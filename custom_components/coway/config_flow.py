@@ -66,7 +66,7 @@ class IoCareConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             CONF_PASSWORD: self._password,
         }
 
-        return self.async_create_entry(title=self._username, data=config_data)
+        return self.async_create_entry(title='Coway IoCare', data=config_data)
 
     @callback
     def _show_form(self, errors=None):
