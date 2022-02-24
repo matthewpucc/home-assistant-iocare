@@ -1,53 +1,55 @@
 """Support for IOCare switches."""
+
 import logging
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.core import HomeAssistant
+from homeassistant.helpers.update_coordinator import (
+    CoordinatorEntity,
+    DataUpdateCoordinator,
+    UpdateFailed,
+)
 from homeassistant.components.switch import SwitchEntity
 from .const import DOMAIN
 _LOGGER = logging.getLogger(__name__)
 
 
-
-def setup_platform(hass, config, add_entities, discovery_info=None):
-    """Platform uses config entry setup."""
-    pass
-
-async def async_setup_entry(hass, config_entry, async_add_entities):
+async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry, async_add_entities):
     """Set up Coway Air Purifier devices."""
-    iocare = hass.data[DOMAIN]
 
-    devices = []
+    coordinator = hass.data[DOMAIN]
 
-    for device in iocare.devices():
-        devices.append(IOCareSwitch(device))
-
-    async_add_entities(devices)
+    async_add_entities(
+        IOCareSwitch(coordinator, idx) for idx, ent in enumerate(coordinator.data)
+    )
 
 
-class IOCareSwitch(SwitchEntity):
+class IOCareSwitch(CoordinatorEntity, SwitchEntity):
     """Representation of a Coway Airmega air purifier switch."""
 
-    def __init__(self, device):
-        self._device = device
-        self._available = True
+    def __init__(self, coordinator, idx):
+        super().__init__(coordinator)
+        self._device = idx
+
 
     @property
     def device_info(self):
         """Return device registry information for this entity."""
         return {
-            "identifiers": {(DOMAIN, self._device.device_id)},
-            "name": self._device.name,
+            "identifiers": {(DOMAIN, self.coordinator.data[self._device].device_id)},
+            "name": self.coordinator.data[self._device].name,
             "manufacturer": "Coway",
-            "model": self._device.product_name_full,
+            "model": self.coordinator.data[self._device].product_name_full,
         }
 
     @property
     def unique_id(self):
         """Return the ID of this purifier."""
-        return self._device.device_id
+        return self.coordinator.data[self._device].device_id
 
     @property
     def name(self):
         """Return the name of the purifier + Light if any."""
-        return self._device.name + " Light"
+        return self.coordinator.data[self._device].name + " Light"
 
     @property
     def icon(self):
@@ -57,17 +59,26 @@ class IOCareSwitch(SwitchEntity):
     @property
     def is_on(self):
         """Return true if switch is on."""
-        return self._device.is_light_on
+        return self.coordinator.data[self._device].is_light_on
 
-    def turn_on(self, **kwargs):
+    async def async_turn_on(self, **kwargs):
         """Turn the switch on."""
-        self._device.set_light(True)
+        await self.hass.async_add_executor_job(self.coordinator.data[self._device].set_light, True)
+        self.coordinator.data[self._device].is_light_on = True
+        self.async_write_ha_state()
+        await self.coordinator.async_request_refresh()
 
-    def turn_off(self, **kwargs):
+    async def async_turn_off(self, **kwargs):
         """Turn the device off."""
-        self._device.set_light(False)
+        await self.hass.async_add_executor_job(self.coordinator.data[self._device].set_light, False)
+        self.coordinator.data[self._device].is_light_on = False
+        self.async_write_ha_state()
+        await self.coordinator.async_request_refresh()
 
-    def update(self):
-        """Update automation state."""
-        _LOGGER.info("Refreshing purifier switch state")
-        self._device.refresh()        
+    @property
+    def available(self):
+        """Return true if purifier is available."""
+        if hasattr(self.coordinator.data[self._device], 'device_connected_to_servers'):
+            return self.coordinator.data[self._device].device_connected_to_servers
+        else:
+            return False
