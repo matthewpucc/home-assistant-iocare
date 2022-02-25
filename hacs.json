@@ -1,6 +1,5 @@
 {
   "name": "Coway IoCare",
   "render_readme": true,
-  "country": "US",
-  "homeassistant": "2022.2.0",
+  "homeassistant": "2022.2.0"
 }
