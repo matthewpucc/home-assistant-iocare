@@ -10,6 +10,8 @@ Home Assistant custom component for monitoring and controlling Coway Airmega air
 
 ## Installation
 
+An account (E-mail/Password) created directly through Coway is required. If you use any of the third-party options (Facebook, Google, Apple, Kakao, Line) to sign in to the IoCare app, this integration will not work.  
+
 ### With HACS
 1. Open HACS Settings and add this repository (https://github.com/RobertD502/home-assistant-iocare)
 as a Custom Repository (use **Integration** as the category).
