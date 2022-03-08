@@ -80,7 +80,10 @@ class CowayTimer(CoordinatorEntity, SelectEntity):
     @property
     def current_option(self):
         """Returns Currently Active Timer"""
-        return IOCARE_TIMERS_TO_HASS.get(self.coordinator.data[self._device].timer)
+        try:
+            return IOCARE_TIMERS_TO_HASS.get(self.coordinator.data[self._device].timer)
+        except AttributeError:
+            _LOGGER.warning(f'Coway IoCare: Unable to get info for {self.coordinator.data[self._device].name}. Make sure purifier is connected to WiFi.')
 
     @property
     def options(self):
