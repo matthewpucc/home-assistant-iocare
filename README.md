@@ -1,4 +1,4 @@
-# Coway IoCare Home Assistant Integration
+# Coway IoCare Home Assistant Integration - 300S & 400S
 <a href="https://www.buymeacoffee.com/RobertD502" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="41" width="174"></a>
 
 **Donations aren't required, but are always appreciated. If you enjoy this integration, consider buying me a coffee by clicking on the logo above.**
