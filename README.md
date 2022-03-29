@@ -30,9 +30,22 @@ and place inside your Home Assistant Core installation's `custom_components` dir
 
 # Devices
 
+## Note
+
+Coway is shipping new 400S (possibly also 300S) units, which are not reporting AQI. 
+
+**The AQI sensor entity is not available for these new units.**
+
+If/when Coway's servers start reporting AQI values, AQI sensor entities will be made available.
+
+
+#
+
 Each purifier is exposed as a device in Home Assistant.
 
 Each purifier has the following entities:
+
+
 
 | Entity | Entity Type | Additional Comments |
 | --- | --- | --- |
