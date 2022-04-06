@@ -1,7 +1,7 @@
 {
   "domain": "coway",
   "name": "Coway IoCare",
-  "version": "0.0.3.3",
+  "version": "0.0.3.4",
   "config_flow": true,
   "iot_class": "cloud_polling",
   "documentation": "https://github.com/RobertD502/home-assistant-iocare/blob/main/README.md",
