@@ -1,7 +1,11 @@
 # Coway IoCare Home Assistant Integration - 300S & 400S
-<a href="https://www.buymeacoffee.com/RobertD502" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="41" width="174"></a>
+[![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg)](https://github.com/hacs/integration) ![GitHub manifest version (path)](https://img.shields.io/github/manifest-json/v/RobertD502/home-assistant-iocare?filename=custom_components%2Fcoway%2Fmanifest.json)
 
-**Donations aren't required, but are always appreciated. If you enjoy this integration, consider buying me a coffee by clicking on the logo above.**
+<a href="https://www.buymeacoffee.com/RobertD502" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="100" width="424"></a>
+
+### A lot of work has been put into creating the backend and this integration. If you enjoy this integration, consider donating by clicking on the logo above.
+
+***All proceeds go towards helping a local animal rescue.**
 
 Home Assistant custom component for monitoring and controlling Coway Airmega air purifiers.
 
@@ -22,11 +26,16 @@ as a Custom Repository (use **Integration** as the category).
 Copy the `coway` directory from `custom_components` in this repository,
 and place inside your Home Assistant Core installation's `custom_components` directory.
 
+`Note`: If installing manually, in order to be alerted about new releases, you will need to subscribe to releases from this repository. 
 
 ## Setup
 1. Install this integration.
 2. Use Config Flow to configure the integration with your Coway IoCare credentials.
     * Initiate Config Flow by navigating to Configuration > Integrations > click the "+" button > find "Coway IoCare" (restart Home Assistant and / or clear browser cache if you can't find it)
+
+Alternatively, click on the button below to add the integration:
+
+[![Open your Home Assistant instance and start setting up a new integration.](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=coway)
 
 # Devices
 
