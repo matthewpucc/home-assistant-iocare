@@ -1,18 +1,29 @@
 {
     "config": {
         "abort": {
-            "already_configured": "IoCare is already configured"
+            "already_configured": "Coway IoCare account is already configured",
+            "reauth_successful": "Re-authentication was successful"
         },
         "error": {
-            "auth_error": "IoCare authentication failed. Are your credentials correct?"
+            "cannot_connect": "Failed to connect to Coway servers",
+            "incorrect_user_pass": "Invalid username and/or password for selected account",
+            "invalid_auth": "Coway API authentication error: unable to retrieve auth 'code'. Likely due to invalid username/password.",
+            "no_purifiers": "No purifiers discovered"
         },
         "step": {
             "user": {
                 "data": {
-                    "username": "IoCare Username",
-                    "password": "IoCare Password"
+                    "username": "Coway IoCare account email or phone number",
+                    "password": "Coway IoCare account password"
                 },
-                "title": "Fill in your Coway IoCare credentials"
+                "title": "Fill in your Coway IoCare account credentials"
+            },
+            "reauth_confirm": {
+                "data": {
+                    "username": "Coway IoCare account email or phone number",
+                    "password": "Coway IoCare account password"
+                },
+                "title": "Reauthenticate with your Coway IoCare account credentials"
             }
         },
         "title": "Coway IoCare"
