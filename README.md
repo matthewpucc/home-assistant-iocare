@@ -59,14 +59,11 @@ Each purifier has the following entities:
 | Entity | Entity Type | Additional Comments |
 | --- | --- | --- |
 | `Purifier` | `Fan` | Ability of controlling power, speed, and preset mode (Auto Mode, Night Mode) |
-| `Current Timer` | `Select` | Ability to set timer to OFF, 1 hour, 2 hours, 4 hours, or 8 hours |
-| `Purifier Light` | `Switch` | Ability to turn light on and off |
+| `Current timer` | `Select` | Ability to set timer to OFF, 1 hour, 2 hours, 4 hours, or 8 hours. `Setting a timer can only be done when a purifier is powered ON` |
+| `Light` | `Switch` | Ability to turn light on and off. `Controlling the light can only be done when a purifier is powered ON` |
 | `AQI` | `Sensor` | Air Quality Index |
-| `Carbon Dioxide` | `Sensor` | |
 | `MAX2 Filter` | `Sensor` | Percentage of MAX2 filter life remaining |
 | `Pre Filter` | `Sensor` | Percentage of Pre filter remaining |
 | `Particulate Matter 10` | `Sensor` | |
-| `Particulate Matter 2.5` | `Sensor` | |
-| `VOC` | `Sensor` | |
-| `Timer Remaining` | `Sensor` | Shows the current amount of time left on a timer. This is a string in the form of hours:minutes |
+| `Timer remaining` | `Sensor` | Shows the current amount of time left on a timer. This is a string in the form of hours:minutes |
 
