@@ -1,24 +1,36 @@
-""" Utilities for Coway Integration """
+"""Utilities for Coway Integration"""
 from __future__ import annotations
 
 import async_timeout
+
 from cowayaio import CowayClient
 from cowayaio.exceptions import AuthError, CowayError
 
-from homeassistant.core import HomeAssistant
+from homeassistant.core import async_get_hass, HomeAssistant
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
 from .const import LOGGER, COWAY_ERRORS, TIMEOUT
 
-async def async_validate_api(hass: HomeAssistant, username: str, password: str) -> bool:
-    """ Get data from API. """
 
-    client = CowayClient(
-        username,
-        password,
-        session=async_get_clientsession(hass),
-        timeout=TIMEOUT,
-    )
+# Create a single instance of CowayClient that is
+# used during the initial config flow and afterwards by
+# the update coordinator. The creation of two CowayClient objects
+# during initial integration configuration caused errors as Coway's
+# servers don't like rapid back-to-back logins.
+COWAY_CLIENT = CowayClient(
+    "",
+    "",
+    session=async_get_clientsession(async_get_hass()),
+    timeout=TIMEOUT
+)
+
+
+async def async_validate_api(hass: HomeAssistant, username: str, password: str) -> None:
+    """Get data from API."""
+
+    COWAY_CLIENT.username = username
+    COWAY_CLIENT.password = password
+    client = COWAY_CLIENT
 
     try:
         async with async_timeout.timeout(TIMEOUT):
@@ -33,9 +45,7 @@ async def async_validate_api(hass: HomeAssistant, username: str, password: str) 
     if not purifiers:
         LOGGER.error("Could not retrieve any purifiers from Coway servers")
         raise NoPurifiersError
-    else:
-        return client.access_token, client.refresh_token
 
 
 class NoPurifiersError(Exception):
-    """ No Purifiers from Coway API. """
+    """No Purifiers from Coway API."""
