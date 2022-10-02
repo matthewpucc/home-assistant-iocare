@@ -1,13 +1,12 @@
-""" Fan platform for Coway integration. """
+"""Fan platform for Coway integration."""
 from __future__ import annotations
 
 from typing import Any
 import asyncio
 
-
 from cowayaio.purifier_model import CowayPurifier
-from homeassistant.components.fan import FanEntity, FanEntityFeature
 
+from homeassistant.components.fan import FanEntity, FanEntityFeature
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
@@ -23,8 +22,8 @@ from .const import (
     PRESET_MODE_AUTO,
     PRESET_MODE_NIGHT,
 )
-
 from .coordinator import CowayDataUpdateCoordinator
+
 
 HASS_FAN_SPEED_TO_IOCARE = {v: k for (k, v) in IOCARE_FAN_SPEED_TO_HASS.items()}
 
@@ -32,12 +31,11 @@ HASS_FAN_SPEED_TO_IOCARE = {v: k for (k, v) in IOCARE_FAN_SPEED_TO_HASS.items()}
 async def async_setup_entry(
     hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback
 ) -> None:
-    """ Set Up Coway Fan Entities. """
+    """Set Up Coway Fan Entities."""
 
     coordinator: CowayDataUpdateCoordinator = hass.data[DOMAIN][entry.entry_id]
 
     fans = []
-
 
     for purifier_id, purifier_data in coordinator.data.purifiers.items():
             fans.extend((
@@ -48,7 +46,7 @@ async def async_setup_entry(
 
 
 class Purifier(CoordinatorEntity, FanEntity):
-    """ Representation of a Coway Airmega air purifier. """
+    """Representation of a Coway Airmega air purifier."""
 
     def __init__(self, coordinator, purifier_id):
         super().__init__(coordinator)
@@ -56,13 +54,13 @@ class Purifier(CoordinatorEntity, FanEntity):
 
     @property
     def purifier_data(self) -> CowayPurifier:
-        """ Handle coordinator purifier data. """
+        """Handle coordinator purifier data."""
 
         return self.coordinator.data.purifiers[self.purifier_id]
 
     @property
     def device_info(self) -> dict[str, Any]:
-        """ Return device registry information for this entity. """
+        """Return device registry information for this entity."""
 
         return {
             "identifiers": {(DOMAIN, self.purifier_data.device_attr['device_id'])},
@@ -73,37 +71,37 @@ class Purifier(CoordinatorEntity, FanEntity):
 
     @property
     def unique_id(self) -> str:
-        """ Sets unique ID for this entity. """
+        """Sets unique ID for this entity."""
 
         return self.purifier_data.device_attr['device_id'] + '_purifier'
 
     @property
     def name(self) -> str:
-        """ Return name of the entity. """
+        """Return name of the entity."""
 
         return "Purifier"
 
     @property
     def has_entity_name(self) -> bool:
-        """ Indicate that entity has name defined. """
+        """Indicate that entity has name defined."""
 
         return True
 
     @property
     def is_on(self) -> bool:
-        """ Return true if the purifier is on. """
+        """Return true if the purifier is on."""
 
         return self.purifier_data.is_on
 
     @property
     def preset_modes(self) -> list:
-        """ Return the available preset modes. """
+        """Return the available preset modes."""
 
         return PRESET_MODES
 
     @property
     def preset_mode(self) -> str:
-        """" Return the current preset mode. """
+        """"Return the current preset mode."""
 
         if self.purifier_data.auto_eco_mode or self.purifier_data.auto_mode:
             return PRESET_MODE_AUTO
@@ -112,7 +110,7 @@ class Purifier(CoordinatorEntity, FanEntity):
 
     @property
     def percentage(self) -> int:
-        """ Return the current speed. """
+        """Return the current speed."""
 
         if not self.is_on:
             return 0
@@ -120,19 +118,19 @@ class Purifier(CoordinatorEntity, FanEntity):
 
     @property
     def speed_count(self) -> int:
-        """ Get length of available speeds list. """
+        """Get length of available speeds list."""
 
         return len(ORDERED_NAMED_FAN_SPEEDS)
 
     @property
     def supported_features(self) -> int:
-        """ Return supported features. """
+        """Return supported features."""
 
         return FanEntityFeature.SET_SPEED | FanEntityFeature.PRESET_MODE
 
     @property
     def available(self) -> bool:
-        """ Return true if purifier is connected to Coway servers. """
+        """Return true if purifier is connected to Coway servers."""
 
         if self.purifier_data.network_status:
             return True
@@ -140,7 +138,7 @@ class Purifier(CoordinatorEntity, FanEntity):
             return False
 
     async def async_turn_on(self, percentage: int = None, **kwargs) -> None:
-        """ Turn the air purifier on. """
+        """Turn the air purifier on."""
 
         if percentage is not None:
             speed = HASS_FAN_SPEED_TO_IOCARE.get(percentage)
@@ -162,7 +160,7 @@ class Purifier(CoordinatorEntity, FanEntity):
             await self.coordinator.async_request_refresh()
 
     async def async_turn_off(self, **kwargs) -> None:
-        """ Turn the air purifier off. """
+        """Turn the air purifier off."""
 
         await self.coordinator.client.async_set_power(self.purifier_data.device_attr, False)
         self.purifier_data.is_on = False
@@ -171,7 +169,7 @@ class Purifier(CoordinatorEntity, FanEntity):
         await self.coordinator.async_request_refresh()
 
     async def async_set_percentage(self, percentage: int) -> None:
-        """ Set the fan speed of the air purifier. """
+        """Set the fan speed of the air purifier."""
 
         if percentage == 0:
             await self.async_turn_off()
@@ -188,7 +186,7 @@ class Purifier(CoordinatorEntity, FanEntity):
                 await self.coordinator.async_request_refresh()
 
     async def async_set_preset_mode(self, preset_mode: str) -> None:
-        """ Set a preset mode for the purifier. """
+        """Set a preset mode for the purifier."""
 
         if not self.is_on:
             await self.coordinator.client.async_set_power(self.purifier_data.device_attr, True)
@@ -205,5 +203,6 @@ class Purifier(CoordinatorEntity, FanEntity):
             self.purifier_data.auto_mode = False
             self.purifier_data.night_mode = True
             self.purifier_data.fan_speed = IOCARE_FAN_OFF
+
         self.async_write_ha_state()
         await self.coordinator.async_request_refresh()
