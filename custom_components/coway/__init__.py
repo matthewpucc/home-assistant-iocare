@@ -1,4 +1,4 @@
-""" Coway Component """
+"""Coway Component."""
 from __future__ import annotations
 
 import asyncio
@@ -7,13 +7,12 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_USERNAME, CONF_PASSWORD
 from homeassistant.core import HomeAssistant
 
-
 from .const import DOMAIN, LOGGER, PLATFORMS
 from .coordinator import CowayDataUpdateCoordinator
-from .util import NoPurifiersError
+
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-    """ Set up Coway from a config entry. """
+    """Set up Coway from a config entry."""
 
     coordinator = CowayDataUpdateCoordinator(hass, entry)
     await coordinator.async_config_entry_first_refresh()
@@ -23,14 +22,16 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     return True
 
+
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-    """ Unload Coway config entry. """
+    """Unload Coway config entry."""
 
     if unload_ok := await hass.config_entries.async_unload_platforms(entry, PLATFORMS):
         del hass.data[DOMAIN][entry.entry_id]
         if not hass.data[DOMAIN]:
             del hass.data[DOMAIN]
     return unload_ok
+
 
 async def async_migrate_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Migrate old entry."""
