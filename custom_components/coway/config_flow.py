@@ -1,6 +1,6 @@
-""" Config Flow for Coway integration """
-
+"""Config Flow for Coway integration."""
 from __future__ import annotations
+
 from collections.abc import Mapping
 from typing import Any
 
@@ -15,6 +15,7 @@ import homeassistant.helpers.config_validation as cv
 from .const import DEFAULT_NAME, DOMAIN
 from .util import async_validate_api, NoPurifiersError
 
+
 DATA_SCHEMA = vol.Schema(
     {
         vol.Required(CONF_USERNAME): cv.string,
@@ -24,14 +25,14 @@ DATA_SCHEMA = vol.Schema(
 
 
 class CowayConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
-    """ Handle a config flow for Coway integration. """
+    """Handle a config flow for Coway integration."""
 
     VERSION = 2
 
     entry: config_entries.ConfigEntry | None
 
     async def async_step_reauth(self, entry_data: Mapping[str, Any]) -> FlowResult:
-        """ Handle re-authentication with Coway. """
+        """Handle re-authentication with Coway."""
 
         self.entry = self.hass.config_entries.async_get_entry(self.context["entry_id"])
         return await self.async_step_reauth_confirm()
@@ -39,7 +40,7 @@ class CowayConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     async def async_step_reauth_confirm(
             self, user_input: dict[str, Any] | None = None
     ) -> FlowResult:
-        """ Confirm re-authentication with Coway. """
+        """Confirm re-authentication with Coway."""
 
         errors: dict[str, str] = {}
 
@@ -47,7 +48,7 @@ class CowayConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             username = user_input[CONF_USERNAME]
             password = user_input[CONF_PASSWORD]
             try:
-                access_token, refresh_token = await async_validate_api(self.hass, username, password)
+                await async_validate_api(self.hass, username, password)
             except AuthError:
                 errors["base"] = "invalid_auth"
             except ConnectionError:
@@ -63,13 +64,10 @@ class CowayConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                         **self.entry.data,
                         CONF_USERNAME: username,
                         CONF_PASSWORD: password,
-                        'initial_access_token': access_token,
-                        'initial_refresh_token': refresh_token,
                     },
                 )
                 await self.hass.config_entries.async_reload(self.entry.entry_id)
                 return self.async_abort(reason="reauth_successful")
-                errors["base"] = "incorrect_user_pass"
 
         return self.async_show_form(
             step_id="reauth_confirm",
@@ -80,16 +78,15 @@ class CowayConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     async def async_step_user(
             self, user_input: dict[str, Any] | None = None
     ) -> FlowResult:
-        """ Handle the initial step. """
+        """Handle the initial step."""
 
         errors: dict[str, str] = {}
 
         if user_input:
-
             username = user_input[CONF_USERNAME]
             password = user_input[CONF_PASSWORD]
             try:
-                access_token, refresh_token = await async_validate_api(self.hass, username, password)
+                await async_validate_api(self.hass, username, password)
             except AuthError:
                 errors["base"] = "invalid_auth"
             except ConnectionError:
@@ -105,8 +102,6 @@ class CowayConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     data={
                         CONF_USERNAME: username,
                         CONF_PASSWORD: password,
-                        'initial_access_token': access_token,
-                        'initial_refresh_token': refresh_token,
                     },
                 )
 
