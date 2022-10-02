@@ -1,28 +1,28 @@
-""" Constants for Coway """
+"""Constants for Coway."""
 
 import asyncio
 import logging
 
 from aiohttp.client_exceptions import ClientConnectionError
+from cowayaio.exceptions import AuthError, CowayError
 
 from homeassistant.const import Platform
 from homeassistant.util.percentage import ordered_list_item_to_percentage
 
-from cowayaio.exceptions import AuthError, CowayError
 
 LOGGER = logging.getLogger(__package__)
 
 DEFAULT_SCAN_INTERVAL = 30
+TIMEOUT = 20
+DEFAULT_NAME = "Coway IoCare"
 DOMAIN = "coway"
+
 PLATFORMS = [
     Platform.FAN,
     Platform.SELECT,
     Platform.SENSOR,
     Platform.SWITCH,
 ]
-
-DEFAULT_NAME = "Coway IoCare"
-TIMEOUT = 20
 
 COWAY_ERRORS = (
     asyncio.TimeoutError,
