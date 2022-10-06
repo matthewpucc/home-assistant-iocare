@@ -7,31 +7,30 @@
 
 ***All proceeds go towards helping a local animal rescue.**
 
-Home Assistant custom component for monitoring and controlling Coway Airmega air purifiers.
-
-
-
 
 ## Installation
 
 An account (E-mail/Password) created directly through Coway is required. If you use any of the third-party options (Facebook, Google, Apple, Kakao, Line) to sign in to the IoCare app, this integration will not work.  
 
 ### With HACS
-1. Open HACS Settings and add this repository (https://github.com/RobertD502/home-assistant-iocare)
-as a Custom Repository (use **Integration** as the category).
-2. The `Coway IoCare` page should automatically load (or find it in the HACS Store)
-3. Click `Install`
+This integration is part of the HACS default repo.
+
+1. Go to the HACS integrations page and select `+ EXPLORE & DOWNLOAD REPOSITORIES` (lower right-hand corner)
+2. Search for `Coway` and select it.
+3. Select `Download` (lower right-hand corner)
+4. Select `Download` once again
+5. Restart Home Assistant
+6. Follow the instructions in the `Setup` section
 
 ### Manual
-Copy the `coway` directory from `custom_components` in this repository,
-and place inside your Home Assistant Core installation's `custom_components` directory.
+1. Copy the `coway` directory from `custom_components` in this repository and place inside your Home Assistant's `custom_components` directory.
+2. Restart Home Assistant
+3. Follow the instructions in the `Setup` section
 
 `Note`: If installing manually, in order to be alerted about new releases, you will need to subscribe to releases from this repository. 
 
 ## Setup
-1. Install this integration.
-2. Use Config Flow to configure the integration with your Coway IoCare credentials.
-    * Initiate Config Flow by navigating to Configuration > Integrations > click the "+" button > find "Coway IoCare" (restart Home Assistant and / or clear browser cache if you can't find it)
+Navigate to Settings > Devices & Services > click the `+ Add Integration` button > search for "Coway" (restart Home Assistant and / or clear browser cache if you can't find it)
 
 Alternatively, click on the button below to add the integration:
 
