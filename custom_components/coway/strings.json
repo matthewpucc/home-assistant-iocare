@@ -1,6 +1,5 @@
 {
   "config": {
-    "title": "Coway IoCare",
     "step": {
       "user": {
         "title": "Fill in your Coway IoCare account credentials",
