@@ -23,7 +23,7 @@
     },
     "abort": {
       "already_configured": "Coway IoCare account is already configured",
-      "Re-authentication was successful"
+      "reauth_successful": "Re-authentication was successful"
     }
   }
 }
