@@ -48,7 +48,7 @@ class CowayConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             username = user_input[CONF_USERNAME]
             password = user_input[CONF_PASSWORD]
             try:
-                await async_validate_api(self.hass, username, password)
+                await async_validate_api(username, password)
             except AuthError:
                 errors["base"] = "invalid_auth"
             except ConnectionError:
@@ -86,7 +86,7 @@ class CowayConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             username = user_input[CONF_USERNAME]
             password = user_input[CONF_PASSWORD]
             try:
-                await async_validate_api(self.hass, username, password)
+                await async_validate_api(username, password)
             except AuthError:
                 errors["base"] = "invalid_auth"
             except ConnectionError:
