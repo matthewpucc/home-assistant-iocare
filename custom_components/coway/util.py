@@ -25,7 +25,7 @@ COWAY_CLIENT = CowayClient(
 )
 
 
-async def async_validate_api(hass: HomeAssistant, username: str, password: str) -> None:
+async def async_validate_api(username: str, password: str) -> None:
     """Get data from API."""
 
     COWAY_CLIENT.username = username
