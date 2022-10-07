@@ -101,7 +101,7 @@ class Purifier(CoordinatorEntity, FanEntity):
 
     @property
     def preset_mode(self) -> str:
-        """"Return the current preset mode."""
+        """Return the current preset mode."""
 
         if self.purifier_data.auto_eco_mode or self.purifier_data.auto_mode:
             return PRESET_MODE_AUTO
