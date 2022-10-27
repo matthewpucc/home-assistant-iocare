@@ -10,7 +10,7 @@
 
 ## Installation
 
-An account (E-mail/Password) created directly through Coway is required. If you use any of the third-party options (Facebook, Google, Apple, Kakao, Line) to sign in to the IoCare app, this integration will not work.  
+An account (E-mail/Password) created directly through Coway is required. As of late 2022, Coway has required accounts to be migrated to a "Coway account". With that said, this integration will only work if you have migrated your account to a Coway account. 
 
 ### With HACS
 This integration is part of the HACS default repo.
