@@ -8,8 +8,6 @@
 ***All proceeds go towards helping a local animal rescue.**
 
 
-# Notice (10/25/22)
-Coway is requiring users to transfer their accounts to a Coway account which has broken this integration. I am currently working on determining their new authorization method which will need to be implemented into the backend. Once finished, a new update will be released and this notice removed.
 ## Installation
 
 An account (E-mail/Password) created directly through Coway is required. If you use any of the third-party options (Facebook, Google, Apple, Kakao, Line) to sign in to the IoCare app, this integration will not work.  
