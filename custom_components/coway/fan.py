@@ -19,7 +19,9 @@ from .const import (
     IOCARE_FAN_SPEED_TO_HASS,
     ORDERED_NAMED_FAN_SPEEDS,
     PRESET_MODES,
+    PRESET_MODES_AP,
     PRESET_MODE_AUTO,
+    PRESET_MODE_ECO,
     PRESET_MODE_NIGHT,
 )
 from .coordinator import CowayDataUpdateCoordinator
@@ -97,7 +99,10 @@ class Purifier(CoordinatorEntity, FanEntity):
     def preset_modes(self) -> list:
         """Return the available preset modes."""
 
-        return PRESET_MODES
+        if self.purifier_data.device_attr['model'] == "AIRMEGA AP-1512HHS":
+            return PRESET_MODES_AP
+        else:
+            return PRESET_MODES
 
     @property
     def preset_mode(self) -> str:
@@ -106,7 +111,10 @@ class Purifier(CoordinatorEntity, FanEntity):
         if self.purifier_data.auto_eco_mode or self.purifier_data.auto_mode:
             return PRESET_MODE_AUTO
         if self.purifier_data.night_mode:
-            return PRESET_MODE_NIGHT
+            if self.purifier_data.device_attr['model'] == "AIRMEGA AP-1512HHS":
+                return PRESET_MODE_ECO
+            else:
+                return PRESET_MODE_NIGHT
 
     @property
     def percentage(self) -> int:
@@ -198,7 +206,7 @@ class Purifier(CoordinatorEntity, FanEntity):
             self.purifier_data.auto_mode = True
             self.purifier_data.night_mode = False
             self.purifier_data.fan_speed = IOCARE_FAN_LOW
-        if preset_mode == PRESET_MODE_NIGHT:
+        if preset_mode in [PRESET_MODE_NIGHT, PRESET_MODE_ECO]:
             await self.coordinator.client.async_set_night_mode(self.purifier_data.device_attr)
             self.purifier_data.auto_mode = False
             self.purifier_data.night_mode = True
