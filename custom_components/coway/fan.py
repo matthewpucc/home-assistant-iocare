@@ -108,12 +108,15 @@ class Purifier(CoordinatorEntity, FanEntity):
     def preset_mode(self) -> str:
         """Return the current preset mode."""
 
-        if self.purifier_data.auto_eco_mode or self.purifier_data.auto_mode:
-            return PRESET_MODE_AUTO
-        if self.purifier_data.night_mode:
-            if self.purifier_data.device_attr['model'] == "AIRMEGA AP-1512HHS":
+        if self.purifier_data.device_attr['model'] == "AIRMEGA AP-1512HHS":
+            if self.purifier_data.auto_mode:
+                return PRESET_MODE_AUTO
+            if self.purifier_data.eco_mode:
                 return PRESET_MODE_ECO
-            else:
+        else:
+            if self.purifier_data.auto_eco_mode or self.purifier_data.auto_mode:
+                return PRESET_MODE_AUTO
+            if self.purifier_data.night_mode:
                 return PRESET_MODE_NIGHT
 
     @property
@@ -204,12 +207,19 @@ class Purifier(CoordinatorEntity, FanEntity):
         if preset_mode == PRESET_MODE_AUTO:
             await self.coordinator.client.async_set_auto_mode(self.purifier_data.device_attr)
             self.purifier_data.auto_mode = True
+            self.purifier_data.auto_eco_mode = False
+            self.purifier_data.eco_mode = False
             self.purifier_data.night_mode = False
             self.purifier_data.fan_speed = IOCARE_FAN_LOW
         if preset_mode in [PRESET_MODE_NIGHT, PRESET_MODE_ECO]:
-            await self.coordinator.client.async_set_night_mode(self.purifier_data.device_attr)
+            if self.purifier_data.device_attr['model'] == "AIRMEGA AP-1512HHS":
+                await self.coordinator.client.async_set_eco_mode(self.purifier_data.device_attr)
+                self.purifier_data.eco_mode = True
+            else:
+                await self.coordinator.client.async_set_night_mode(self.purifier_data.device_attr)
+                self.purifier_data.auto_eco_mode = False
+                self.purifier_data.night_mode = True
             self.purifier_data.auto_mode = False
-            self.purifier_data.night_mode = True
             self.purifier_data.fan_speed = IOCARE_FAN_OFF
 
         self.async_write_ha_state()
