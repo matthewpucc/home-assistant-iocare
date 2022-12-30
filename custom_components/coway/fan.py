@@ -13,6 +13,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .const import (
+    COWAY_COORDINATOR,
     DOMAIN,
     IOCARE_FAN_LOW,
     IOCARE_FAN_OFF,
@@ -35,7 +36,7 @@ async def async_setup_entry(
 ) -> None:
     """Set Up Coway Fan Entities."""
 
-    coordinator: CowayDataUpdateCoordinator = hass.data[DOMAIN][entry.entry_id]
+    coordinator: CowayDataUpdateCoordinator = hass.data[DOMAIN][entry.entry_id][COWAY_COORDINATOR]
 
     fans = []
 
