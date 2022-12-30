@@ -2,12 +2,12 @@
   "domain": "coway",
   "name": "Coway IoCare",
   "integration_type": "hub",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "config_flow": true,
   "iot_class": "cloud_polling",
   "documentation": "https://github.com/RobertD502/home-assistant-iocare/blob/main/README.md",
   "issue_tracker": "https://github.com/RobertD502/home-assistant-iocare/issues",
-  "requirements": ["cowayaio==0.1.5"],
+  "requirements": ["cowayaio==0.1.6"],
   "dependencies": [],
   "codeowners": ["@RobertD502"]
 }
