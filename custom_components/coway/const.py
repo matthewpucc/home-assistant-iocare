@@ -17,6 +17,10 @@ TIMEOUT = 20
 DEFAULT_NAME = "Coway IoCare"
 DOMAIN = "coway"
 
+COWAY_COORDINATOR = "coway_coordinator"
+UPDATE_LISTENER = "update_listener"
+SKIP_PASSWORD_CHANGE = "skip_password_change"
+
 PLATFORMS = [
     Platform.FAN,
     Platform.SELECT,
