@@ -40,6 +40,8 @@ Alternatively, click on the button below to add the integration:
 
 [![Open your Home Assistant instance and start setting up a new integration.](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=coway)
 
+`Note:` Coway has implemented password checks which prompts users to change or ignore changing passwords that are 60 or more days old. If you want to skip changing your password, select the `Skip password change` option during setup. Otherwise, when the time comes, you will need to manually login using the IoCare app and change your password followed by reauthentication of the integration within Home Assistant. 
+
 # Devices
 
 ## Note
