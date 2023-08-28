@@ -20,7 +20,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .const import COWAY_COORDINATOR, DOMAIN
+from .const import COWAY_COORDINATOR, DOMAIN, IAQ_NAMED
 from .coordinator import CowayDataUpdateCoordinator
 
 
@@ -41,6 +41,7 @@ async def async_setup_entry(
                 MAX2Filter(coordinator, purifier_id),
                 ParticulateMatter10(coordinator, purifier_id),
                 TimerRemaining(coordinator, purifier_id),
+                IndoorAQ(coordinator, purifier_id),
             ))
 
     async_add_entities(sensors)
@@ -412,6 +413,75 @@ class TimerRemaining(CoordinatorEntity, SensorEntity):
         """Set icon for entity."""
 
         return 'mdi:timer'
+
+    @property
+    def available(self) -> bool:
+        """Return true if purifier is connected to Coway servers."""
+
+        if self.purifier_data.network_status:
+            return True
+        else:
+            return False
+
+
+class IndoorAQ(CoordinatorEntity, SensorEntity):
+    """Representation of named indoor air quality."""
+
+    def __init__(self, coordinator, purifier_id):
+        super().__init__(coordinator)
+        self.purifier_id = purifier_id
+
+    @property
+    def purifier_data(self) -> CowayPurifier:
+        """Handle coordinator purifier data."""
+
+        return self.coordinator.data.purifiers[self.purifier_id]
+
+    @property
+    def device_info(self) -> dict[str, Any]:
+        """Return device registry information for this entity."""
+
+        return {
+            "identifiers": {(DOMAIN, self.purifier_data.device_attr['device_id'])},
+            "name": self.purifier_data.device_attr['name'],
+            "manufacturer": "Coway",
+            "model": self.purifier_data.device_attr['model'],
+        }
+
+    @property
+    def unique_id(self) -> str:
+        """Sets unique ID for this entity."""
+
+        return self.purifier_data.device_attr['device_id'] + '_indoor_aq'
+
+    @property
+    def name(self) -> str:
+        """Return name of the entity."""
+
+        return "Indoor air quality"
+
+    @property
+    def has_entity_name(self) -> bool:
+        """Indicate that entity has name defined."""
+
+        return True
+
+    @property
+    def native_value(self):
+        """Return named air quality."""
+
+        dust_pollution = self.purifier_data.dust_pollution
+        if dust_pollution:
+            named_quality = IAQ_NAMED.get(dust_pollution, "Unknown air quality")
+            return named_quality
+        else:
+            return None
+
+    @property
+    def icon(self):
+        """Set icon for entity."""
+
+        return 'mdi:air-filter'
 
     @property
     def available(self) -> bool:
