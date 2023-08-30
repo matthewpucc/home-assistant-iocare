@@ -34,7 +34,7 @@ async def async_setup_entry(
     sensors = []
 
     for purifier_id, purifier_data in coordinator.data.purifiers.items():
-            LOGGER.debug(f'PURIFIER DATA for {purifier_id}: {purifier_data}\n')
+            LOGGER.debug(f'PURIFIER DATA for {purifier_id}: {purifier_data}')
             if purifier_data.mcu_version is None:
                 sensors.append(AirQualityIndex(coordinator, purifier_id))
 
