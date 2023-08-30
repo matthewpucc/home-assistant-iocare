@@ -21,11 +21,8 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .const import COWAY_COORDINATOR, DOMAIN, IAQ_NAMED
+from .const import COWAY_COORDINATOR, DOMAIN, IAQ_NAMED, LOGGER
 from .coordinator import CowayDataUpdateCoordinator
-
-import logging
-_LOGGER = logging.getLogger("custom_components.coway")
 
 async def async_setup_entry(
     hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback
@@ -37,17 +34,28 @@ async def async_setup_entry(
     sensors = []
 
     for purifier_id, purifier_data in coordinator.data.purifiers.items():
-            _LOGGER.debug(f'PURIFIER DATA for {purifier_id}: {purifier_data}\n')
+            LOGGER.debug(f'PURIFIER DATA for {purifier_id}: {purifier_data}\n')
             if purifier_data.mcu_version is None:
                 sensors.append(AirQualityIndex(coordinator, purifier_id))
+
             sensors.extend((
                 PreFilter(coordinator, purifier_id),
                 MAX2Filter(coordinator, purifier_id),
-                ParticulateMatter10(coordinator, purifier_id),
-                ParticulateMatter25(coordinator, purifier_id),
                 TimerRemaining(coordinator, purifier_id),
                 IndoorAQ(coordinator, purifier_id),
             ))
+
+            product_name = purifier_data.device_attr['product_name']
+            match purifier_data.device_attr['product_name']:
+                case "AIRMEGA_ICONS":
+                    sensors.extend((
+                        ParticulateMatter25(coordinator, purifier_id),
+                    ))
+                case _:
+                    sensors.extend((
+                        ParticulateMatter10(coordinator, purifier_id),
+                    ))
+
 
     async_add_entities(sensors)
 
@@ -325,8 +333,7 @@ class ParticulateMatter10(CoordinatorEntity, SensorEntity):
     @property
     def native_value(self) -> int:
         """Return current PM10 measurement."""
-        pm10 = self.purifier_data.particulate_matter_10
-        return pm10 if pm10.isnumeric() else 0
+        return self.purifier_data.particulate_matter_10
 
     @property
     def native_unit_of_measurement(self) -> str:
@@ -357,10 +364,7 @@ class ParticulateMatter10(CoordinatorEntity, SensorEntity):
         """Return true if purifier is connected to Coway servers."""
 
         if self.purifier_data.network_status:
-            if self.purifier_data.particulate_matter_10.isnumeric():
-                return True
-            else:
-                return False
+            return True
         else:
             return False
 
@@ -409,8 +413,7 @@ class ParticulateMatter25(CoordinatorEntity, SensorEntity):
     @property
     def native_value(self) -> int:
         """Return current PM2.5 measurement."""
-        pm25 = self.purifier_data.particulate_matter_2_5
-        return pm25 if pm25.isnumeric() else 0
+        return self.purifier_data.particulate_matter_2_5
 
     @property
     def native_unit_of_measurement(self) -> str:
@@ -441,10 +444,7 @@ class ParticulateMatter25(CoordinatorEntity, SensorEntity):
         """Return true if purifier is connected to Coway servers."""
 
         if self.purifier_data.network_status:
-            if self.purifier_data.particulate_matter_2_5.isnumeric():
-                return True
-            else:
-                return False
+            return True
         else:
             return False
 
