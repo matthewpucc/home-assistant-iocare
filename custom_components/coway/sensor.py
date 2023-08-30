@@ -42,7 +42,6 @@ async def async_setup_entry(
                 PreFilter(coordinator, purifier_id),
                 MAX2Filter(coordinator, purifier_id),
                 TimerRemaining(coordinator, purifier_id),
-                IndoorAQ(coordinator, purifier_id),
             ))
 
             product_name = purifier_data.device_attr['product_name']
@@ -50,7 +49,10 @@ async def async_setup_entry(
                 case "AIRMEGA_ICONS":
                     sensors.append(ParticulateMatter25(coordinator, purifier_id))
                 case _:
-                    sensors.append(ParticulateMatter10(coordinator, purifier_id))
+                    sensors.extend((
+                        ParticulateMatter10(coordinator, purifier_id),
+                        IndoorAQ(coordinator, purifier_id),
+                    ))
 
 
     async_add_entities(sensors)
