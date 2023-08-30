@@ -1,4 +1,5 @@
 """Sensor platform for Coway integration."""
+
 from __future__ import annotations
 
 from datetime import time
@@ -23,6 +24,8 @@ from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from .const import COWAY_COORDINATOR, DOMAIN, IAQ_NAMED
 from .coordinator import CowayDataUpdateCoordinator
 
+import logging
+_LOGGER = logging.getLogger("custom_components.coway")
 
 async def async_setup_entry(
     hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback
@@ -34,12 +37,14 @@ async def async_setup_entry(
     sensors = []
 
     for purifier_id, purifier_data in coordinator.data.purifiers.items():
+            _LOGGER.debug(f'PURIFIER DATA for {purifier_id}: {purifier_data}\n')
             if purifier_data.mcu_version is None:
                 sensors.append(AirQualityIndex(coordinator, purifier_id))
             sensors.extend((
                 PreFilter(coordinator, purifier_id),
                 MAX2Filter(coordinator, purifier_id),
                 ParticulateMatter10(coordinator, purifier_id),
+                ParticulateMatter25(coordinator, purifier_id),
                 TimerRemaining(coordinator, purifier_id),
                 IndoorAQ(coordinator, purifier_id),
             ))
@@ -320,8 +325,8 @@ class ParticulateMatter10(CoordinatorEntity, SensorEntity):
     @property
     def native_value(self) -> int:
         """Return current PM10 measurement."""
-
-        return self.purifier_data.particulate_matter_10
+        pm10 = self.purifier_data.particulate_matter_10
+        return pm10 if pm10.isnumeric() else 0
 
     @property
     def native_unit_of_measurement(self) -> str:
@@ -352,7 +357,94 @@ class ParticulateMatter10(CoordinatorEntity, SensorEntity):
         """Return true if purifier is connected to Coway servers."""
 
         if self.purifier_data.network_status:
-            return True
+            if self.purifier_data.particulate_matter_10.isnumeric():
+                return True
+            else:
+                return False
+        else:
+            return False
+
+class ParticulateMatter25(CoordinatorEntity, SensorEntity):
+    """Representation of PM2.5 measurement."""
+
+    def __init__(self, coordinator, purifier_id):
+        super().__init__(coordinator)
+        self.purifier_id = purifier_id
+
+    @property
+    def purifier_data(self) -> CowayPurifier:
+        """Handle coordinator purifier data."""
+
+        return self.coordinator.data.purifiers[self.purifier_id]
+
+    @property
+    def device_info(self) -> dict[str, Any]:
+        """Return device registry information for this entity."""
+
+        return {
+            "identifiers": {(DOMAIN, self.purifier_data.device_attr['device_id'])},
+            "name": self.purifier_data.device_attr['name'],
+            "manufacturer": "Coway",
+            "model": self.purifier_data.device_attr['model'],
+        }
+
+    @property
+    def unique_id(self) -> str:
+        """Sets unique ID for this entity."""
+
+        return self.purifier_data.device_attr['device_id'] + '_particulate_matter_2_5'
+
+    @property
+    def name(self) -> str:
+        """Return name of the entity."""
+
+        return "Particulate matter 2.5"
+
+    @property
+    def has_entity_name(self) -> bool:
+        """Indicate that entity has name defined."""
+
+        return True
+
+    @property
+    def native_value(self) -> int:
+        """Return current PM2.5 measurement."""
+        pm25 = self.purifier_data.particulate_matter_2_5
+        return pm25 if pm25.isnumeric() else 0
+
+    @property
+    def native_unit_of_measurement(self) -> str:
+        """Return unit of measurement."""
+
+        return CONCENTRATION_MICROGRAMS_PER_CUBIC_METER
+
+    @property
+    def device_class(self) -> SensorDeviceClass:
+        """Return entity device class."""
+
+        return SensorDeviceClass.PM25
+
+    @property
+    def state_class(self) -> SensorStateClass:
+        """Return state class type."""
+
+        return SensorStateClass.MEASUREMENT
+
+    @property
+    def icon(self):
+        """Set icon for entity."""
+
+        return 'mdi:air-filter'
+
+    @property
+    def available(self) -> bool:
+        """Return true if purifier is connected to Coway servers."""
+
+        if self.purifier_data.network_status:
+            if self.purifier_data.particulate_matter_2_5.isnumeric():
+                return True
+            else:
+                return False
         else:
             return False
 

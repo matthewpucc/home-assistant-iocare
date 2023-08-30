@@ -71,6 +71,7 @@ Each purifier has the following entities:
 | `MAX2 Filter` | `Sensor` | Percentage of MAX2 filter life remaining |
 | `Pre Filter` | `Sensor` | Percentage of Pre filter remaining |
 | `Particulate Matter 10` | `Sensor` | |
+| `Particulate Matter 2.5` | `Sensor` | |
 | `Timer remaining` | `Sensor` | Shows the current amount of time left on a timer. This is a string in the form of hours:minutes |
 | `Indoor air quality` | `Sensor` | Shows the current indoor air quality based on Coway's scale. The state can be Good, Moderate, Unhealthy, or Very Unhealthy. |
 | `Pre-filter wash frequency` | `Select` | Shows current pre-filter wash frequency setting and allows you to change it. |
