@@ -46,15 +46,11 @@ async def async_setup_entry(
             ))
 
             product_name = purifier_data.device_attr['product_name']
-            match purifier_data.device_attr['product_name']:
+            match product_name:
                 case "AIRMEGA_ICONS":
-                    sensors.extend((
-                        ParticulateMatter25(coordinator, purifier_id),
-                    ))
+                    sensors.append(ParticulateMatter25(coordinator, purifier_id))
                 case _:
-                    sensors.extend((
-                        ParticulateMatter10(coordinator, purifier_id),
-                    ))
+                    sensors.append(ParticulateMatter10(coordinator, purifier_id))
 
 
     async_add_entities(sensors)
@@ -333,7 +329,7 @@ class ParticulateMatter10(CoordinatorEntity, SensorEntity):
     @property
     def native_value(self) -> int:
         """Return current PM10 measurement."""
-        return self.purifier_data.particulate_matter_10
+        return int(self.purifier_data.particulate_matter_10)
 
     @property
     def native_unit_of_measurement(self) -> str:
@@ -413,7 +409,7 @@ class ParticulateMatter25(CoordinatorEntity, SensorEntity):
     @property
     def native_value(self) -> int:
         """Return current PM2.5 measurement."""
-        return self.purifier_data.particulate_matter_2_5
+        return int(self.purifier_data.particulate_matter_2_5)
 
     @property
     def native_unit_of_measurement(self) -> str:
