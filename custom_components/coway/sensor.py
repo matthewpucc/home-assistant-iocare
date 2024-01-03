@@ -46,7 +46,8 @@ async def async_setup_entry(
 
             product_name = purifier_data.device_attr['product_name']
             match product_name:
-                case "AIRMEGA_ICONS":
+                # Columbia is Airmega 250S
+                case "AIRMEGA_ICONS" | "COLUMBIA":
                     sensors.append(ParticulateMatter25(coordinator, purifier_id))
                 case _:
                     sensors.extend((
