@@ -9,6 +9,7 @@
 ***All proceeds go towards helping a local animal rescue.**
 
 ## Confirmed Working Models
+- 250S
 - 300S
 - 400S
 - AP-1512HHS
@@ -48,11 +49,11 @@ Alternatively, click on the button below to add the integration:
 
 ## Note
 
-Coway is shipping new 400S (possibly also 300S) units, which are not reporting AQI. 
+Coway is shipping newer units, which are not reporting AQI. 
 
-**The AQI sensor entity is not available for these new units.**
+**If the AQI sensor entity is not created for your purifier, it is one of the newer units.**
 
-If/when Coway's servers start reporting AQI values, AQI sensor entities will be made available.
+If/when Coway's servers start reporting AQI values for these units, AQI sensor entities will be made available.
 
 
 #
@@ -72,7 +73,7 @@ Each purifier has the following entities:
 | `MAX2 Filter` | `Sensor` | Percentage of MAX2 filter life remaining |
 | `Pre Filter` | `Sensor` | Percentage of Pre filter remaining |
 | `Particulate Matter 10` | `Sensor` | Not available for IconS purifiers. |
-| `Particulate Matter 2.5` | `Sensor` | Only available for IconS purifiers. |
+| `Particulate Matter 2.5` | `Sensor` | Only available for IconS and 250S purifiers. |
 | `Timer remaining` | `Sensor` | Shows the current amount of time left on a timer. This is a string in the form of hours:minutes |
 | `Indoor air quality` | `Sensor` | Shows the current indoor air quality based on Coway's scale. The state can be Good, Moderate, Unhealthy, or Very Unhealthy. Not available for IconS purifiers. |
 | `Pre-filter wash frequency` | `Select` | Shows current pre-filter wash frequency setting and allows you to change it. |
