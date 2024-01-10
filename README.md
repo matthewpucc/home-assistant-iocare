@@ -9,51 +9,53 @@
 ***All proceeds go towards helping a local animal rescue.**
 
 ## Confirmed Working Models
-- 250S
-- 300S
-- 400S
-- AP-1512HHS
-- IconS
+- [250S](https://cowaymega.com/products/airmega-250s)
+- [300S](https://cowaymega.com/products/airmega-300s)
+- [400S](https://cowaymega.com/products/airmega-400s)
+- [AP-1512HHS](https://cowaymega.com/products/airmega-ap-1512hhs-ap-1519p)
+- [IconS](https://cowaymega.com/products/airmega-icons)
 
-## Installation
+# Installation
 
-An account (E-mail/Password) created directly through Coway is required. As of late 2022, Coway has required accounts to be migrated to a "Coway account". With that said, this integration will only work if you have migrated your account to a Coway account. 
+An account (E-mail/Password) created directly through Coway is required.
+> [!Warning]
+> As of late 2022, Coway has required accounts to be migrated to a "Coway account". With that said, this integration will only work if you have migrated your account to a Coway account. 
 
-### With HACS
-This integration is part of the HACS default repo.
+#### With HACS
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=RobertD502&repository=home-assistant-iocare&category=integration)
 
-1. Go to the HACS integrations page and select `+ EXPLORE & DOWNLOAD REPOSITORIES` (lower right-hand corner)
-2. Search for `Coway` and select it.
-3. Select `Download` (lower right-hand corner)
-4. Select `Download` once again
-5. Restart Home Assistant
-6. Follow the instructions in the `Setup` section
+> [!Tip]
+> If you are unable to use the button above, manually search for Coway in HACS.
 
-### Manual
+#### Manual
 1. Copy the `coway` directory from `custom_components` in this repository and place inside your Home Assistant's `custom_components` directory.
 2. Restart Home Assistant
 3. Follow the instructions in the `Setup` section
 
-`Note`: If installing manually, in order to be alerted about new releases, you will need to subscribe to releases from this repository. 
+> [!WARNING]
+> If installing manually, in order to be alerted about new releases, you will need to subscribe to releases from this repository.
 
-## Setup
-Navigate to Settings > Devices & Services > click the `+ Add Integration` button > search for "Coway" (restart Home Assistant and / or clear browser cache if you can't find it)
-
-Alternatively, click on the button below to add the integration:
-
+# Setup
 [![Open your Home Assistant instance and start setting up a new integration.](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=coway)
 
-`Note:` Coway has implemented password checks which prompts users to change or ignore changing passwords that are 60 or more days old. If you want to skip changing your password, select the `Skip password change` option during setup. Otherwise, when the time comes, you will need to manually login using the IoCare app and change your password followed by reauthentication of the integration within Home Assistant. 
+> [!Tip]
+> If you are unable to use the button above, follow the steps below:
+> 1. Navigate to the Home Assistant Integrations page (Settings --> Devices & Services)
+> 2. Click the `+ ADD INTEGRATION` button in the lower right-hand corner
+> 3. Search for `Coway`
+
+> [!Caution]
+> Coway has implemented password checks which prompts users to change or ignore changing passwords that are 60 or more days old. If you want to skip changing your password, select the `Skip password change` option during setup. Otherwise, when the time comes, you will need to manually login using the IoCare app and change your password followed by reauthentication of the integration within Home Assistant. 
 
 # Devices
 
-## Note
-
-Coway is shipping newer units, which are not reporting AQI. 
-
-**If the AQI sensor entity is not created for your purifier, it is one of the newer units.**
-
-If/when Coway's servers start reporting AQI values for these units, AQI sensor entities will be made available.
+> [!Caution]
+>
+> Coway is shipping newer units, which are not reporting an AQI. 
+>
+> **If the AQI sensor entity is not created for your purifier, it is one of the newer units.**
+> 
+> If/when Coway's servers start reporting AQI values for these units, AQI sensor entities will be made available.
 
 
 #
