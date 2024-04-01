@@ -1,8 +1,5 @@
 # Coway IoCare Home Assistant Integration
 
-> [!Caution]
->
-> Coway has completely changed their API - This integration will be non-functional until I rewrite the cowayaio library to account for the changes. Once that is done, this message will be removed.
 
 [![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg)](https://github.com/hacs/integration) ![GitHub manifest version (path)](https://img.shields.io/github/manifest-json/v/RobertD502/home-assistant-iocare?filename=custom_components%2Fcoway%2Fmanifest.json)
 
