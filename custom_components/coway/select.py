@@ -15,6 +15,8 @@ from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from .const import (
     COWAY_COORDINATOR,
     DOMAIN,
+    IOCARE_LIGHT_MODES,
+    IOCARE_LIGHT_MODES_TO_HASS,
     IOCARE_PRE_FILTER_TO_HASS,
     IOCARE_PRE_FILTER_WASH_FREQUENCIES,
     IOCARE_SMART_SENSITIVITIES,
@@ -29,6 +31,7 @@ from .coordinator import CowayDataUpdateCoordinator
 HASS_TIMER_TO_IOCARE = {v: k for (k, v) in IOCARE_TIMERS_TO_HASS.items()}
 HASS_PRE_FILTER_TO_IOCARE = {v: k for (k, v) in IOCARE_PRE_FILTER_TO_HASS.items()}
 HASS_SMART_SENSITIVITY_TO_IOCARE = {v: k for (k, v) in IOCARE_SMART_SENSITIVITY_TO_HASS.items()}
+HASS_LIGHT_MODE_TO_IOCARE = {v: k for (k, v) in IOCARE_LIGHT_MODES_TO_HASS.items()}
 
 
 async def async_setup_entry(
@@ -41,6 +44,10 @@ async def async_setup_entry(
     selects = []
 
     for purifier_id, purifier_data in coordinator.data.purifiers.items():
+            product_name = purifier_data.device_attr['product_name']
+            #250S purifier has multiple light modes
+            if product_name in ['COLUMBIA']:
+                selects.append(Light(coordinator, purifier_id))
             selects.extend((
                 Timer(coordinator, purifier_id),
                 PreFilterFrequency(coordinator, purifier_id),
@@ -311,6 +318,91 @@ class SmartModeSensitivity(CoordinatorEntity, SelectEntity):
             self.purifier_data.smart_mode_sensitivity = sensitivity
         else:
             LOGGER.error(f'Setting smart mode sensitivity for {self.purifier_data.device_attr["name"]} can only be done when the purifier is On.')
+
+        self.async_write_ha_state()
+        await self.coordinator.async_request_refresh()
+
+
+class Light(CoordinatorEntity, SelectEntity):
+    """Representation of selecting light mode. Currently only used
+       by 250S purifiers.
+    """
+
+    def __init__(self, coordinator, purifier_id):
+        super().__init__(coordinator)
+        self.purifier_id = purifier_id
+
+    @property
+    def purifier_data(self) -> CowayPurifier:
+        """Handle coordinator purifier data."""
+
+        return self.coordinator.data.purifiers[self.purifier_id]
+
+    @property
+    def device_info(self) -> dict[str, Any]:
+        """Return device registry information for this entity."""
+
+        return {
+            "identifiers": {(DOMAIN, self.purifier_data.device_attr['device_id'])},
+            "name": self.purifier_data.device_attr['name'],
+            "manufacturer": "Coway",
+            "model": self.purifier_data.device_attr['model'],
+        }
+
+    @property
+    def unique_id(self) -> str:
+        """Sets unique ID for this entity."""
+
+        return self.purifier_data.device_attr['device_id'] + '_light'
+
+    @property
+    def name(self) -> str:
+        """Return name of the entity."""
+
+        return "Light"
+
+    @property
+    def has_entity_name(self) -> bool:
+        """Indicate that entity has name defined."""
+
+        return True
+
+    @property
+    def icon(self) -> str:
+        """Set icon."""
+
+        return 'mdi:lightbulb'
+
+    @property
+    def current_option(self) -> str:
+        """Returns current light mode."""
+
+        return IOCARE_LIGHT_MODES_TO_HASS.get(self.purifier_data.light_mode)
+
+    @property
+    def options(self) -> list:
+        """Return list of all the available light modes."""
+
+        return IOCARE_LIGHT_MODES
+
+    @property
+    def available(self) -> bool:
+        """Return true if purifier is connected to Coway servers."""
+
+        if self.purifier_data.network_status:
+            return True
+        else:
+            return False
+
+    async def async_select_option(self, option: str) -> None:
+        """Change the selected option."""
+
+        if self.purifier_data.is_on:
+            mode = HASS_LIGHT_MODE_TO_IOCARE.get(option)
+            await self.coordinator.client.async_set_light_mode(self.purifier_data.device_attr, mode)
+            self.purifier_data.light_mode = mode
+        else:
+            LOGGER.error(f'Setting light mode for {self.purifier_data.device_attr["name"]} can only be done when the purifier is On.')
 
         self.async_write_ha_state()
         await self.coordinator.async_request_refresh()

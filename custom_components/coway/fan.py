@@ -21,10 +21,12 @@ from .const import (
     LOGGER,
     ORDERED_NAMED_FAN_SPEEDS,
     PRESET_MODES,
+    PRESET_MODES_250,
     PRESET_MODES_AP,
     PRESET_MODE_AUTO,
     PRESET_MODE_ECO,
     PRESET_MODE_NIGHT,
+    PRESET_MODE_RAPID,
 )
 from .coordinator import CowayDataUpdateCoordinator
 
@@ -103,6 +105,8 @@ class Purifier(CoordinatorEntity, FanEntity):
 
         if self.purifier_data.device_attr['model'] == "AIRMEGA AP-1512HHS":
             return PRESET_MODES_AP
+        elif self.purifier_data.device_attr['product_name'] == 'COLUMBIA':
+            return PRESET_MODES_250
         else:
             return PRESET_MODES
 
@@ -115,6 +119,13 @@ class Purifier(CoordinatorEntity, FanEntity):
                 return PRESET_MODE_AUTO
             if self.purifier_data.eco_mode:
                 return PRESET_MODE_ECO
+        elif self.purifier_data.device_attr['product_name'] == 'COLUMBIA':
+            if self.purifier_data.auto_mode:
+                return PRESET_MODE_AUTO
+            if self.purifier_data.night_mode:
+                return PRESET_MODE_NIGHT
+            if self.purifier_data.rapid_mode:
+                return PRESET_MODE_RAPID
         else:
             if self.purifier_data.auto_eco_mode or self.purifier_data.auto_mode:
                 return PRESET_MODE_AUTO
@@ -127,6 +138,14 @@ class Purifier(CoordinatorEntity, FanEntity):
 
         if not self.is_on:
             return 0
+        ## 250S: When in smart(eco) mode, the fan speed is returned as 9.
+        ##       When fan speed of 5 is returned, the purifier is in Rapid mode.
+        ## Neither of these speeds is a valid user-selectable speed so, in HA, we need to artifically
+        ## show the speed as being 0, which is in line with the IoCare app showing no speed selected
+        ## when in either of these two modes.
+        if self.purifier_data.device_attr['product_name'] == 'COLUMBIA':
+            if self.purifier_data.fan_speed in ['5', '9']:
+                return IOCARE_FAN_SPEED_TO_HASS.get(IOCARE_FAN_OFF)
         return IOCARE_FAN_SPEED_TO_HASS.get(self.purifier_data.fan_speed)
 
     @property
@@ -223,6 +242,12 @@ class Purifier(CoordinatorEntity, FanEntity):
                 self.purifier_data.auto_eco_mode = False
                 self.purifier_data.night_mode = True
             self.purifier_data.auto_mode = False
+            self.purifier_data.fan_speed = IOCARE_FAN_OFF
+        if preset_mode == PRESET_MODE_RAPID:
+            await self.coordinator.client.async_set_rapid_mode(self.purifier_data.device_attr)
+            self.purifier_data.auto_mode = False
+            self.purifier_data.night_mode = False
+            self.purifier_data.rapid_mode = True
             self.purifier_data.fan_speed = IOCARE_FAN_OFF
 
         self.async_write_ha_state()
