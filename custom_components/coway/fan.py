@@ -184,12 +184,14 @@ class Purifier(CoordinatorEntity, FanEntity):
             self.purifier_data.night_mode = False
             self.purifier_data.fan_speed = speed
             self.async_write_ha_state()
+            await asyncio.sleep(1.5)
             await self.coordinator.async_request_refresh()
         else:
             await self.coordinator.client.async_set_power(self.purifier_data.device_attr, True)
             self.purifier_data.is_on = True
             self.purifier_data.light_on = True
             self.async_write_ha_state()
+            await asyncio.sleep(1.5)
             await self.coordinator.async_request_refresh()
 
     async def async_turn_off(self, **kwargs) -> None:
@@ -199,6 +201,7 @@ class Purifier(CoordinatorEntity, FanEntity):
         self.purifier_data.is_on = False
         self.purifier_data.light_on = False
         self.async_write_ha_state()
+        await asyncio.sleep(1.5)
         await self.coordinator.async_request_refresh()
 
     async def async_set_percentage(self, percentage: int) -> None:
@@ -216,6 +219,7 @@ class Purifier(CoordinatorEntity, FanEntity):
                 self.purifier_data.auto_mode = False
                 self.purifier_data.night_mode = False
                 self.async_write_ha_state()
+                await asyncio.sleep(1.5)
                 await self.coordinator.async_request_refresh()
 
     async def async_set_preset_mode(self, preset_mode: str) -> None:
@@ -251,4 +255,5 @@ class Purifier(CoordinatorEntity, FanEntity):
             self.purifier_data.fan_speed = IOCARE_FAN_OFF
 
         self.async_write_ha_state()
+        await asyncio.sleep(1.5)
         await self.coordinator.async_request_refresh()
