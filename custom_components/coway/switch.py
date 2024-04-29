@@ -1,6 +1,7 @@
 """Switch platform for Coway integration."""
 from __future__ import annotations
 
+import asyncio
 from typing import Any
 
 from cowayaio.purifier_model import CowayPurifier
@@ -102,6 +103,7 @@ class PurifierLight(CoordinatorEntity, SwitchEntity):
             self.purifier_data.light_on = False
 
         self.async_write_ha_state()
+        await asyncio.sleep(1.5)
         await self.coordinator.async_request_refresh()
 
     async def async_turn_off(self, **kwargs) -> None:
@@ -115,6 +117,7 @@ class PurifierLight(CoordinatorEntity, SwitchEntity):
             self.purifier_data.light_on = False
 
         self.async_write_ha_state()
+        await asyncio.sleep(1.5)
         await self.coordinator.async_request_refresh()
 
     @property

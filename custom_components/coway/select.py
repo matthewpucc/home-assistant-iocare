@@ -1,6 +1,7 @@
 """Select platform for Coway integration."""
 from __future__ import annotations
 
+import asyncio
 from typing import Any
 
 from cowayaio.purifier_model import CowayPurifier
@@ -142,6 +143,7 @@ class Timer(CoordinatorEntity, SelectEntity):
             self.purifier_data.timer_remaining = '0'
 
         self.async_write_ha_state()
+        await asyncio.sleep(1.5)
         await self.coordinator.async_request_refresh()
 
 
@@ -231,6 +233,7 @@ class PreFilterFrequency(CoordinatorEntity, SelectEntity):
             LOGGER.error(f'Setting a pre-filter wash frequency for {self.purifier_data.device_attr["name"]} can only be done when the purifier is On.')
 
         self.async_write_ha_state()
+        await asyncio.sleep(1.5)
         await self.coordinator.async_request_refresh()
 
 
@@ -320,6 +323,7 @@ class SmartModeSensitivity(CoordinatorEntity, SelectEntity):
             LOGGER.error(f'Setting smart mode sensitivity for {self.purifier_data.device_attr["name"]} can only be done when the purifier is On.')
 
         self.async_write_ha_state()
+        await asyncio.sleep(1.5)
         await self.coordinator.async_request_refresh()
 
 
@@ -405,4 +409,5 @@ class Light(CoordinatorEntity, SelectEntity):
             LOGGER.error(f'Setting light mode for {self.purifier_data.device_attr["name"]} can only be done when the purifier is On.')
 
         self.async_write_ha_state()
+        await asyncio.sleep(1.5)
         await self.coordinator.async_request_refresh()
