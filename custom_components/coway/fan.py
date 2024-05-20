@@ -9,6 +9,7 @@ from cowayaio.purifier_model import CowayPurifier
 from homeassistant.components.fan import FanEntity, FanEntityFeature
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
@@ -22,11 +23,14 @@ from .const import (
     ORDERED_NAMED_FAN_SPEEDS,
     PRESET_MODES,
     PRESET_MODES_250,
+    PRESET_MODES_250_WITH_ECO,
     PRESET_MODES_AP,
     PRESET_MODE_AUTO,
+    PRESET_MODE_AUTO_ECO,
     PRESET_MODE_ECO,
     PRESET_MODE_NIGHT,
     PRESET_MODE_RAPID,
+    PRESET_MODES_WITH_ECO,
 )
 from .coordinator import CowayDataUpdateCoordinator
 
@@ -106,9 +110,15 @@ class Purifier(CoordinatorEntity, FanEntity):
         if self.purifier_data.device_attr['model'] == "AIRMEGA AP-1512HHS":
             return PRESET_MODES_AP
         elif self.purifier_data.device_attr['product_name'] == 'COLUMBIA':
-            return PRESET_MODES_250
+            if self.purifier_data.fan_speed == '9':
+                return PRESET_MODES_250_WITH_ECO
+            else:
+                return PRESET_MODES_250
         else:
-            return PRESET_MODES
+            if self.purifier_data.auto_eco_mode:
+                return PRESET_MODES_WITH_ECO
+            else:
+                return PRESET_MODES
 
     @property
     def preset_mode(self) -> str:
@@ -120,6 +130,10 @@ class Purifier(CoordinatorEntity, FanEntity):
             if self.purifier_data.eco_mode:
                 return PRESET_MODE_ECO
         elif self.purifier_data.device_attr['product_name'] == 'COLUMBIA':
+            # Fan speed of 9 is seen when in Auto Eco mode
+            # for 250S purifiers
+            if self.purifier_data.fan_speed == '9':
+                return PRESET_MODE_AUTO_ECO
             if self.purifier_data.auto_mode:
                 return PRESET_MODE_AUTO
             if self.purifier_data.night_mode:
@@ -127,7 +141,10 @@ class Purifier(CoordinatorEntity, FanEntity):
             if self.purifier_data.rapid_mode:
                 return PRESET_MODE_RAPID
         else:
-            if self.purifier_data.auto_eco_mode or self.purifier_data.auto_mode:
+#            if self.purifier_data.auto_eco_mode or self.purifier_data.auto_mode:
+            if self.purifier_data.auto_eco_mode:
+                return PRESET_MODE_AUTO_ECO
+            if self.purifier_data.auto_mode:
                 return PRESET_MODE_AUTO
             if self.purifier_data.night_mode:
                 return PRESET_MODE_NIGHT
@@ -146,6 +163,8 @@ class Purifier(CoordinatorEntity, FanEntity):
         if self.purifier_data.device_attr['product_name'] == 'COLUMBIA':
             if self.purifier_data.fan_speed in ['5', '9']:
                 return IOCARE_FAN_SPEED_TO_HASS.get(IOCARE_FAN_OFF)
+        if self.preset_mode == PRESET_MODE_AUTO_ECO:
+            return IOCARE_FAN_SPEED_TO_HASS.get(IOCARE_FAN_OFF)
         return IOCARE_FAN_SPEED_TO_HASS.get(self.purifier_data.fan_speed)
 
     @property
@@ -225,6 +244,10 @@ class Purifier(CoordinatorEntity, FanEntity):
     async def async_set_preset_mode(self, preset_mode: str) -> None:
         """Set a preset mode for the purifier."""
 
+        if preset_mode == PRESET_MODE_AUTO_ECO:
+            raise HomeAssistantError(
+                f'Preset mode {PRESET_MODE_AUTO_ECO} cannot be manually selected. It is only used to indentify when a purifier is in this mode.'
+            )
         if not self.is_on:
             await self.coordinator.client.async_set_power(self.purifier_data.device_attr, True)
             self.purifier_data.is_on = True
