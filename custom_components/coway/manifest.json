@@ -10,9 +10,11 @@
   "integration_type": "hub",
   "iot_class": "cloud_polling",
   "issue_tracker": "https://github.com/RobertD502/home-assistant-iocare/issues",
-  "requirements": [
-    "cowayaio==0.1.11"
+  "loggers": [
+    "cowayaio"
   ],
-  "loggers": ["cowayaio"],
-  "version": "0.4.2"
+  "requirements": [
+    "cowayaio==0.1.12"
+  ],
+  "version": "0.4.3"
 }
