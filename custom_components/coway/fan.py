@@ -186,7 +186,10 @@ class Purifier(CoordinatorEntity, FanEntity):
         if self.purifier_data.network_status:
             return True
         else:
-            LOGGER.error(f'{self.purifier_data.device_attr["name"]} is reported as offline.')
+            LOGGER.error(
+                f'{self.purifier_data.device_attr["name"]} is reported as offline. Please disable WiFi on the device '
+                f'(even if WiFi indicator light is normal) and re-enable it for the purifier to check back in with Coway\'s servers.'
+            )
             return False
 
     async def async_turn_on(self, percentage: int = None, preset_mode: str = None, **kwargs) -> None:
