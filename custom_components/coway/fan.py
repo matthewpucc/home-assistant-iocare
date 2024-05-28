@@ -110,7 +110,7 @@ class Purifier(CoordinatorEntity, FanEntity):
 
         if self.purifier_data.device_attr['model'] == "AIRMEGA AP-1512HHS":
             return PRESET_MODES_AP
-        elif self.purifier_data.device_attr['product_name'] == 'COLUMBIA':
+        elif self.purifier_data.device_attr['product_name'] in ['COLUMBIA', 'COLUMBIA_EU']:
             if self.purifier_data.fan_speed == '9':
                 return PRESET_MODES_250_WITH_ECO
             else:
@@ -130,7 +130,7 @@ class Purifier(CoordinatorEntity, FanEntity):
                 return PRESET_MODE_AUTO
             if self.purifier_data.eco_mode:
                 return PRESET_MODE_ECO
-        elif self.purifier_data.device_attr['product_name'] == 'COLUMBIA':
+        elif self.purifier_data.device_attr['product_name'] in ['COLUMBIA', 'COLUMBIA_EU']:
             # Fan speed of 9 is seen when in Auto Eco mode
             # for 250S purifiers
             if self.purifier_data.fan_speed == '9':
@@ -160,7 +160,7 @@ class Purifier(CoordinatorEntity, FanEntity):
         ## Neither of these speeds is a valid user-selectable speed so, in HA, we need to artifically
         ## show the speed as being 0, which is in line with the IoCare app showing no speed selected
         ## when in either of these two modes.
-        if self.purifier_data.device_attr['product_name'] == 'COLUMBIA':
+        if self.purifier_data.device_attr['product_name'] in ['COLUMBIA', 'COLUMBIA_EU']:
             if self.purifier_data.fan_speed in ['5', '9']:
                 return IOCARE_FAN_SPEED_TO_HASS.get(IOCARE_FAN_OFF)
         if self.preset_mode == PRESET_MODE_AUTO_ECO:

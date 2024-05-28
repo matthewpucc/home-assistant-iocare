@@ -29,7 +29,7 @@ async def async_setup_entry(
 
     for purifier_id, purifier_data in coordinator.data.purifiers.items():
         product_name = purifier_data.device_attr['product_name']
-        if product_name not in ['COLUMBIA']:
+        if product_name not in ['COLUMBIA', 'COLUMBIA_EU']:
             switches.extend((
                 PurifierLight(coordinator, purifier_id),
             ))

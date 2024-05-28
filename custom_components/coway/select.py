@@ -48,7 +48,7 @@ async def async_setup_entry(
     for purifier_id, purifier_data in coordinator.data.purifiers.items():
             product_name = purifier_data.device_attr['product_name']
             #250S purifier has multiple light modes
-            if product_name in ['COLUMBIA']:
+            if product_name in ['COLUMBIA', 'COLUMBIA_EU']:
                 selects.append(Light(coordinator, purifier_id))
             selects.extend((
                 Timer(coordinator, purifier_id),

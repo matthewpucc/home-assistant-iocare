@@ -46,7 +46,7 @@ async def async_setup_entry(
             # PM and Air Quality sensor availability depends on the purfier model
             # COLUMBIA = 250S
             product_name = purifier_data.device_attr['product_name']
-            if product_name in ["AIRMEGA_ICONS", "COLUMBIA"]:
+            if product_name in ["AIRMEGA_ICONS", "COLUMBIA", "COLUMBIA_EU"]:
                 sensors.append(ParticulateMatter25(coordinator, purifier_id))
             if product_name != "AIRMEGA_ICONS":
                 sensors.extend((
