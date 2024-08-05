@@ -59,6 +59,10 @@ async def async_setup_entry(
 class Purifier(CoordinatorEntity, FanEntity):
     """Representation of a Coway Airmega air purifier."""
 
+    # Need to remove this in 2025.2 once setting it manually
+    # isn't required anymore.
+    _enable_turn_on_off_backwards_compatibility = False
+
     def __init__(self, coordinator, purifier_id):
         super().__init__(coordinator)
         self.purifier_id = purifier_id
@@ -177,7 +181,12 @@ class Purifier(CoordinatorEntity, FanEntity):
     def supported_features(self) -> int:
         """Return supported features."""
 
-        return FanEntityFeature.SET_SPEED | FanEntityFeature.PRESET_MODE
+        return (
+            FanEntityFeature.SET_SPEED
+            | FanEntityFeature.PRESET_MODE
+            | FanEntityFeature.TURN_ON
+            | FanEntityFeature.TURN_OFF
+        )
 
     @property
     def available(self) -> bool:
