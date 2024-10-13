@@ -8,13 +8,13 @@ from cowayaio.exceptions import AuthError, PasswordExpired
 import voluptuous as vol
 
 from homeassistant import config_entries
-from homeassistant.const import CONF_USERNAME, CONF_PASSWORD
+from homeassistant.const import CONF_USERNAME, CONF_PASSWORD, CONF_SCAN_INTERVAL
 from homeassistant.core import callback
 from homeassistant.data_entry_flow import FlowResult
 from homeassistant.helpers.aiohttp_client import async_create_clientsession
 import homeassistant.helpers.config_validation as cv
 
-from .const import DEFAULT_NAME, DOMAIN, SKIP_PASSWORD_CHANGE
+from .const import DEFAULT_NAME, DOMAIN, SKIP_PASSWORD_CHANGE, DEFAULT_SCAN_INTERVAL
 from .util import async_validate_api, NoPurifiersError
 
 
@@ -23,6 +23,7 @@ DATA_SCHEMA = vol.Schema(
         vol.Required(CONF_USERNAME): cv.string,
         vol.Required(CONF_PASSWORD): cv.string,
         vol.Optional(SKIP_PASSWORD_CHANGE): bool,
+        vol.Optional(CONF_SCAN_INTERVAL): time_period,
     }
 )
 
@@ -59,6 +60,7 @@ class CowayConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             username = user_input[CONF_USERNAME]
             password = user_input[CONF_PASSWORD]
             skip_password_change = user_input[SKIP_PASSWORD_CHANGE] if SKIP_PASSWORD_CHANGE in user_input else False
+            scan_interval = user_input[CONF_SCAN_INTERVAL] if CONF_SCAN_INTERVAL in user_input else DEFAULT_SCAN_INTERVAL
             try:
                 session = async_create_clientsession(self.hass)
                 await async_validate_api(self.hass, username, password, skip_password_change, session)
@@ -80,7 +82,10 @@ class CowayConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                         CONF_USERNAME: username,
                         CONF_PASSWORD: password,
                     },
-                    options={SKIP_PASSWORD_CHANGE: skip_password_change},
+                    options={
+                        SKIP_PASSWORD_CHANGE: skip_password_change,
+                        CONF_SCAN_INTERVAL: scan_interval,
+                    },
                 )
                 await self.hass.config_entries.async_reload(self.entry.entry_id)
                 return self.async_abort(reason="reauth_successful")
@@ -102,6 +107,7 @@ class CowayConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             username = user_input[CONF_USERNAME]
             password = user_input[CONF_PASSWORD]
             skip_password_change = user_input[SKIP_PASSWORD_CHANGE] if SKIP_PASSWORD_CHANGE in user_input else False
+            scan_interval = user_input[CONF_SCAN_INTERVAL] if CONF_SCAN_INTERVAL in user_input else DEFAULT_SCAN_INTERVAL
             try:
                 session = async_create_clientsession(self.hass)
                 await async_validate_api(self.hass, username, password, skip_password_change, session)
@@ -123,7 +129,10 @@ class CowayConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                         CONF_USERNAME: username,
                         CONF_PASSWORD: password,
                     },
-                    options={SKIP_PASSWORD_CHANGE: skip_password_change},
+                    options={
+                        SKIP_PASSWORD_CHANGE: skip_password_change,
+                        CONF_SCAN_INTERVAL: scan_interval,
+                    },
                 )
 
         return self.async_show_form(
@@ -156,6 +165,12 @@ class CowayOptionsFlowHandler(config_entries.OptionsFlow):
                     SKIP_PASSWORD_CHANGE, False
                 ),
             ): bool,
+            vol.Required(
+                CONF_SCAN_INTERVAL,
+                default=self.config_entry.options.get(
+                    CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL
+                ),
+            ): time_period
         }
 
         return self.async_show_form(step_id="coway_account_settings", data_schema=vol.Schema(options))
